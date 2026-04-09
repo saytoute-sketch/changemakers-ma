@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سجّلي الآن – صانعات تغيير</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#0D2818;--sage:#1E6B3C;--mid:#2E8B57;--light:#4CAF7D;--pale:#A8D5B5;
+  --gold:#D4A017;--gold2:#F0C040;--ember:#E8621A;--cream:#FBF5E6;
+  --white:#FFFFFF;--muted:rgba(255,255,255,0.5);--card:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.1);--font:'Tajawal',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--forest);color:var(--white);font-family:var(--font);min-height:100vh;}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(46,139,87,0.15) 0%,transparent 70%);
+}
+
+/* NAV */
+nav{padding:20px 48px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--white);}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--ember));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.logo-text{font-weight:800;font-size:1rem;}
+.logo-text span{color:var(--gold2);}
+.nav-back{color:var(--muted);text-decoration:none;font-size:0.85rem;transition:color 0.3s;}
+.nav-back:hover{color:var(--white);}
+
+/* MAIN */
+main{max-width:680px;margin:0 auto;padding:60px 32px 100px;}
+
+/* HEADER */
+.page-header{text-align:center;margin-bottom:48px;}
+.header-badge{display:inline-block;padding:6px 18px;background:rgba(212,160,23,0.12);border:1px solid rgba(212,160,23,0.25);border-radius:100px;font-size:0.78rem;color:var(--gold2);margin-bottom:16px;}
+.header-title{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:10px;}
+.header-title span{color:var(--gold2);}
+.header-sub{color:var(--muted);font-size:0.95rem;line-height:1.7;}
+
+/* FORM CARD */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px;backdrop-filter:blur(10px);}
+
+/* STEPS INDICATOR */
+.steps{display:flex;gap:0;margin-bottom:36px;background:rgba(255,255,255,0.03);border-radius:12px;padding:6px;}
+.step-tab{flex:1;padding:10px 8px;border-radius:8px;text-align:center;font-size:0.78rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all 0.3s;}
+.step-tab.active{background:linear-gradient(135deg,var(--gold),var(--ember));color:var(--forest);}
+.step-tab.done{color:var(--light);}
+.step-tab .s-num{display:block;font-size:0.65rem;margin-bottom:2px;opacity:0.7;}
+
+/* FORM GROUPS */
+.form-group{margin-bottom:22px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+label{display:block;font-size:0.8rem;font-weight:700;color:rgba(255,255,255,0.7);margin-bottom:8px;}
+label .required{color:var(--ember);}
+.input-wrap{position:relative;}
+.input-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
+input,select,textarea{
+  width:100%;padding:13px 44px 13px 16px;
+  background:rgba(255,255,255,0.05);
+  border:1.5px solid var(--border);
+  border-radius:10px;color:var(--white);
+  font-family:var(--font);font-size:0.92rem;
+  transition:all 0.3s;outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold2);background:rgba(255,255,255,0.07);box-shadow:0 0 0 3px rgba(240,192,64,0.1);}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.25);}
+select option{background:#1a1a2e;color:var(--white);}
+textarea{resize:vertical;min-height:90px;padding-right:16px;}
+.hint{font-size:0.72rem;color:var(--muted);margin-top:5px;}
+.error-msg{font-size:0.72rem;color:#FF7B72;margin-top:5px;display:none;}
+input.invalid{border-color:#FF7B72;}
+input.valid{border-color:var(--light);}
+
+/* RADIO/CHECKBOX GROUPS */
+.radio-group{display:flex;flex-direction:column;gap:10px;}
+.radio-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.3s;}
+.radio-item:hover{border-color:rgba(212,160,23,0.3);background:rgba(212,160,23,0.05);}
+.radio-item input[type=radio]{width:16px;height:16px;accent-color:var(--gold2);flex-shrink:0;}
+.radio-item.selected{border-color:var(--gold2);background:rgba(212,160,23,0.08);}
+.radio-label{font-size:0.88rem;font-weight:600;}
+.radio-desc{font-size:0.72rem;color:var(--muted);}
+
+/* CHECKBOX */
+.check-item{display:flex;align-items:flex-start;gap:12px;cursor:pointer;}
+.check-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold2);flex-shrink:0;margin-top:3px;}
+.check-label{font-size:0.85rem;color:rgba(255,255,255,0.75);line-height:1.5;}
+.check-label a{color:var(--gold2);text-decoration:none;}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:12px;margin:24px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:0.72rem;color:var(--muted);}
+
+/* BUTTONS */
+.btn-primary{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),var(--ember));border:none;border-radius:12px;color:var(--forest);font-family:var(--font);font-weight:900;font-size:1rem;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,160,23,0.4);}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.btn-secondary{width:100%;padding:14px;background:transparent;border:1.5px solid var(--border);border-radius:12px;color:var(--muted);font-family:var(--font);font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.3s;margin-top:12px;}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.3);color:var(--white);}
+
+/* PROGRESS */
+.form-progress{height:4px;background:rgba(255,255,255,0.06);border-radius:100px;margin-bottom:32px;overflow:hidden;}
+.form-progress-bar{height:100%;background:linear-gradient(to left,var(--ember),var(--gold));border-radius:100px;transition:width 0.5s ease;}
+
+/* SUCCESS */
+.success-state{display:none;text-align:center;padding:20px 0;}
+.success-icon{font-size:4rem;margin-bottom:20px;animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes bounceIn{from{transform:scale(0)}to{transform:scale(1)}}
+.success-title{font-size:1.6rem;font-weight:900;color:var(--light);margin-bottom:10px;}
+.success-text{color:var(--muted);line-height:1.8;margin-bottom:28px;}
+.success-id{display:inline-block;padding:10px 24px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.25);border-radius:100px;font-family:monospace;font-size:1rem;color:var(--light);letter-spacing:0.1em;}
+
+/* SIDE INFO */
+.info-sidebar{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:24px;}
+.info-item{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;}
+.info-item:last-child{margin-bottom:0;}
+.info-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px;}
+.info-text .info-title{font-size:0.85rem;font-weight:700;margin-bottom:3px;}
+.info-text .info-desc{font-size:0.78rem;color:var(--muted);line-height:1.5;}
+
+/* SPOTS */
+.spots-counter{background:rgba(232,98,26,0.1);border:1px solid rgba(232,98,26,0.2);border-radius:10px;padding:14px 18px;text-align:center;margin-bottom:24px;}
+.spots-num{font-size:1.8rem;font-weight:900;color:var(--ember);font-family:monospace;}
+.spots-label{font-size:0.78rem;color:var(--muted);}
+.spots-bar{height:6px;background:rgba(255,255,255,0.06);border-radius:100px;margin:8px 0 4px;overflow:hidden;}
+.spots-fill{height:100%;background:linear-gradient(to left,var(--ember),var(--gold));border-radius:100px;width:72%;}
+
+@media(max-width:600px){
+  nav{padding:16px 20px;}
+  main{padding:40px 20px 80px;}
+  .form-card{padding:24px;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">🌻</div>
+    <div class="logo-text">صانعات <span>تغيير</span></div>
+  </a>
+  <a href="index.html" class="nav-back">← العودة للموقع</a>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="header-badge">🌿 دورة ماي 2026 – إيموزار كندر</div>
+    <h1 class="header-title">سجّلي في برنامج <span>صانعات تغيير</span></h1>
+    <p class="header-sub">أكملي النموذج بعناية. سنتواصل معكِ خلال 48 ساعة لتأكيد مكانكِ.</p>
+  </div>
+
+  <!-- Spots Counter -->
+  <div class="spots-counter">
+    <div class="spots-num" id="spotsLeft">7</div>
+    <div class="spots-label">مكان متبقٍّ من أصل 25</div>
+    <div class="spots-bar"><div class="spots-fill"></div></div>
+    <div style="font-size:0.7rem;color:var(--muted);">18 مرشدة سجّلت بالفعل</div>
+  </div>
+
+  <!-- Info sidebar -->
+  <div class="info-sidebar">
+    <div class="info-item">
+      <div class="info-icon">📅</div>
+      <div class="info-text"><div class="info-title">تاريخ البرنامج</div><div class="info-desc">01 – 05 ماي 2026 | إيموزار كندر – أفران</div></div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">👩‍👧‍👦</div>
+      <div class="info-text"><div class="info-title">الفئة المستهدفة</div><div class="info-desc">مرشدات كشفيات (15-22 سنة) من جميع جهات المغرب</div></div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">🎓</div>
+      <div class="info-text"><div class="info-title">ما ستحملينه</div><div class="info-desc">شهادة معتمدة + مشروع تغيير + متابعة 12 شهراً</div></div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">💰</div>
+      <div class="info-text"><div class="info-title">الرسوم</div><div class="info-desc">رمزية تشمل الإقامة والتغذية. منح متاحة عند الحاجة.</div></div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-card">
+    <!-- Progress -->
+    <div class="form-progress"><div class="form-progress-bar" id="progressBar" style="width:33%"></div></div>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step-tab active" id="tab1"><span class="s-num">الخطوة 1</span>المعلومات الشخصية</div>
+      <div class="step-tab" id="tab2"><span class="s-num">الخطوة 2</span>المعلومات الكشفية</div>
+      <div class="step-tab" id="tab3"><span class="s-num">الخطوة 3</span>دوافعكِ</div>
+    </div>
+
+    <form id="registrationForm" novalidate>
+
+      <!-- ═══ STEP 1 ═══ -->
+      <div id="step1">
+        <div class="form-row">
+          <div class="form-group">
+            <label>الاسم الكامل <span class="required">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="fullName" placeholder="الاسم الرباعي" required>
+            </div>
+            <div class="error-msg" id="err-fullName">الرجاء إدخال الاسم الكامل</div>
+          </div>
+          <div class="form-group">
+            <label>تاريخ الميلاد <span class="required">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">📅</span>
+              <input type="date" id="birthDate" required>
+            </div>
+            <div class="error-msg" id="err-birthDate">يجب أن يكون عمركِ بين 15 و22 سنة</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>رقم الهاتف <span class="required">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">📱</span>
+              <input type="tel" id="phone" placeholder="06 XX XX XX XX" required>
+            </div>
+            <div class="error-msg" id="err-phone">رقم هاتف غير صحيح</div>
+          </div>
+          <div class="form-group">
+            <label>البريد الإلكتروني</label>
+            <div class="input-wrap">
+              <span class="input-icon">📧</span>
+              <input type="email" id="email" placeholder="email@example.com">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>الجهة <span class="required">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">🗺️</span>
+              <select id="region" required>
+                <option value="">اختاري جهتكِ...</option>
+                <option>طنجة-تطوان-الحسيمة</option>
+                <option>الشرق</option>
+                <option>فاس-مكناس</option>
+                <option>الرباط-سلا-القنيطرة</option>
+                <option>بني ملال-خنيفرة</option>
+                <option>الدار البيضاء-سطات</option>
+                <option>مراكش-آسفي</option>
+                <option>درعة-تافيلالت</option>
+                <option>سوس-ماسة</option>
+                <option>كلميم-واد نون</option>
+                <option>العيون-الساقية الحمراء</option>
+                <option>الداخلة-وادي الذهب</option>
+              </select>
+            </div>
+            <div class="error-msg" id="err-region">الرجاء اختيار الجهة</div>
+          </div>
+          <div class="form-group">
+            <label>المدينة <span class="required">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">🏙️</span>
+              <input type="text" id="city" placeholder="اسم مدينتكِ" required>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary" onclick="goToStep(2)">التالي – المعلومات الكشفية →</button>
+      </div>
+
+      <!-- ═══ STEP 2 ═══ -->
+      <div id="step2" style="display:none;">
+        <div class="form-row">
+          <div class="form-group">
+            <label>اسم الفرع الكشفي <span class="required">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">🏕️</span>
+              <input type="text" id="troop" placeholder="اسم الفرع" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>سنوات الانتساب للكشفية <span class="required">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">📆</span>
+              <select id="years" required>
+                <option value="">اختاري...</option>
+                <option value="1">سنة واحدة</option>
+                <option value="2">سنتان</option>
+                <option value="3">3 سنوات</option>
+                <option value="5">4-5 سنوات</option>
+                <option value="6">أكثر من 5 سنوات</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>مستواكِ القيادي الحالي <span class="required">*</span></label>
+          <div class="radio-group" id="levelGroup">
+            <label class="radio-item" onclick="selectRadio(this,'level','member')">
+              <input type="radio" name="level" value="member">
+              <div><div class="radio-label">👣 عضوة نشيطة</div><div class="radio-desc">أشارك في أنشطة الفرع بانتظام</div></div>
+            </label>
+            <label class="radio-item" onclick="selectRadio(this,'level','leader')">
+              <input type="radio" name="level" value="leader">
+              <div><div class="radio-label">⚡ قائدة فريق</div><div class="radio-desc">أقود مجموعة صغيرة داخل الفرع</div></div>
+            </label>
+            <label class="radio-item" onclick="selectRadio(this,'level','trainer')">
+              <input type="radio" name="level" value="trainer">
+              <div><div class="radio-label">🌟 قائدة فرع / مدرّبة</div><div class="radio-desc">أدير الفرع أو أُدرّب الأعضاء</div></div>
+            </label>
+          </div>
+          <div class="error-msg" id="err-level">الرجاء اختيار مستواكِ</div>
+        </div>
+
+        <div class="form-group">
+          <label>هل شاركتِ في تكوينات سابقة؟</label>
+          <div class="input-wrap">
+            <span class="input-icon">📝</span>
+            <input type="text" id="prevTraining" placeholder="اذكري اسمها أو اكتبي 'لا'">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;">
+          <button type="button" class="btn-secondary" style="width:auto;padding:14px 28px;" onclick="goToStep(1)">← السابق</button>
+          <button type="button" class="btn-primary" onclick="goToStep(3)">التالي – دوافعكِ →</button>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 3 ═══ -->
+      <div id="step3" style="display:none;">
+        <div class="form-group">
+          <label>لماذا تريدين الانضمام لهذا البرنامج؟ <span class="required">*</span></label>
+          <textarea id="motivation" placeholder="أخبريني بصدق... ما الذي دفعكِ للتسجيل؟ ما الذي تأملين تغييره في نفسكِ أو مجتمعكِ؟" required></textarea>
+          <div class="hint">الأجوبة الصادقة تُساعدنا في اختيار المرشدات الأنسب. لا توجد إجابة خاطئة.</div>
+          <div class="error-msg" id="err-motivation">الرجاء الإجابة على هذا السؤال</div>
+        </div>
+
+        <div class="form-group">
+          <label>ما المشكلة في مجتمعكِ التي تريدين حلّها؟ <span class="required">*</span></label>
+          <textarea id="problem" placeholder="صِفي مشكلة اجتماعية حقيقية في حيّكِ أو مدينتكِ تؤلمكِ وتريدين المساهمة في حلّها." required></textarea>
+          <div class="error-msg" id="err-problem">الرجاء وصف المشكلة</div>
+        </div>
+
+        <div class="form-group">
+          <label>هل لديكِ قيود على الإقامة طوال 5 أيام؟</label>
+          <div class="radio-group">
+            <label class="radio-item" onclick="selectRadio(this,'stay','yes')">
+              <input type="radio" name="stay" value="yes">
+              <div><div class="radio-label">✅ لا، أستطيع الإقامة كاملة</div></div>
+            </label>
+            <label class="radio-item" onclick="selectRadio(this,'stay','partial')">
+              <input type="radio" name="stay" value="partial">
+              <div><div class="radio-label">⚠️ يوم أو يومان فقط غير مناسبَين</div></div>
+            </label>
+            <label class="radio-item" onclick="selectRadio(this,'stay','no')">
+              <input type="radio" name="stay" value="no">
+              <div><div class="radio-label">❌ لديّ قيود – سأشرح في الملاحظات</div></div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>أي تعليقات أو ملاحظات إضافية؟</label>
+          <textarea id="notes" placeholder="أي شيء تريدين إخبارنا به..." style="min-height:70px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="check-item">
+            <input type="checkbox" id="terms" required>
+            <span class="check-label">أوافق على <a href="#">شروط البرنامج</a> وأتعهّد بالالتزام الكامل بالأيام الخمسة والمتابعة بعدها.</span>
+          </label>
+          <div class="error-msg" id="err-terms">يجب الموافقة على الشروط للمتابعة</div>
+        </div>
+
+        <div class="form-group">
+          <label class="check-item">
+            <input type="checkbox" id="newsletter">
+            <span class="check-label">أرغب في استلام أخبار وفعاليات صانعات تغيير عبر البريد الإلكتروني.</span>
+          </label>
+        </div>
+
+        <div style="display:flex;gap:12px;">
+          <button type="button" class="btn-secondary" style="width:auto;padding:14px 28px;" onclick="goToStep(2)">← السابق</button>
+          <button type="submit" class="btn-primary" id="submitBtn">🚀 أرسلي طلب التسجيل</button>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">🌻</div>
+      <div class="success-title">تمّ استلام طلبكِ!</div>
+      <div class="success-text">
+        شكراً لكِ. سنراجع طلبكِ ونتواصل معكِ خلال 48 ساعة على رقم هاتفكِ.<br>
+        رقم طلبكِ للمتابعة:
+      </div>
+      <div class="success-id" id="registrationId">CM-2026-XXXX</div>
+      <div style="margin-top:24px;">
+        <a href="index.html" style="display:inline-block;padding:12px 32px;background:var(--card);border:1px solid var(--border);border-radius:100px;color:var(--white);text-decoration:none;font-size:0.9rem;">← العودة للموقع</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ─── STEP NAVIGATION ────────────────────
+function goToStep(n){
+  if(n>1 && !validateStep(n-1)) return;
+  [1,2,3].forEach(i=>{
+    document.getElementById('step'+i).style.display = i===n?'block':'none';
+    const tab=document.getElementById('tab'+i);
+    tab.className='step-tab'+(i===n?' active':i<n?' done':'');
+  });
+  document.getElementById('progressBar').style.width=(n/3*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── VALIDATION ─────────────────────────
+function validateStep(step){
+  let valid=true;
+  if(step===1){
+    const name=document.getElementById('fullName');
+    if(!name.value.trim()||name.value.trim().split(' ').length<2){
+      showError('fullName','الرجاء إدخال الاسم الكامل (اسمان على الأقل)'); valid=false;
+    } else clearError('fullName');
+
+    const birth=document.getElementById('birthDate');
+    if(birth.value){
+      const age=Math.floor((new Date()-new Date(birth.value))/31557600000);
+      if(age<15||age>22){ showError('birthDate','يجب أن يكون عمركِ بين 15 و22 سنة'); valid=false; }
+      else clearError('birthDate');
+    } else { showError('birthDate','الرجاء إدخال تاريخ الميلاد'); valid=false; }
+
+    const phone=document.getElementById('phone');
+    if(!/^(0[5-7]\d{8})$/.test(phone.value.replace(/\s/g,''))){
+      showError('phone','رقم الهاتف يجب أن يبدأ بـ 06 أو 07 أو 05'); valid=false;
+    } else clearError('phone');
+
+    if(!document.getElementById('region').value){ showError('region','الرجاء اختيار الجهة'); valid=false; }
+    else clearError('region');
+  }
+  if(step===2){
+    if(!document.querySelector('input[name="level"]:checked')){ showError('level','الرجاء اختيار مستواكِ القيادي'); valid=false; }
+    else clearError('level');
+  }
+  if(step===3){
+    const mot=document.getElementById('motivation');
+    if(mot.value.trim().length<30){ showError('motivation','الرجاء الكتابة بتفصيل أكثر (30 حرفاً على الأقل)'); valid=false; }
+    else clearError('motivation');
+    const prob=document.getElementById('problem');
+    if(prob.value.trim().length<20){ showError('problem','الرجاء وصف المشكلة بشكل أوضح'); valid=false; }
+    else clearError('problem');
+    if(!document.getElementById('terms').checked){ showError('terms','يجب الموافقة على الشروط'); valid=false; }
+    else clearError('terms');
+  }
+  return valid;
+}
+
+function showError(id,msg){
+  const input=document.getElementById(id);
+  const err=document.getElementById('err-'+id);
+  if(input){ input.classList.add('invalid'); input.classList.remove('valid'); }
+  if(err){ err.textContent=msg; err.style.display='block'; }
+}
+function clearError(id){
+  const input=document.getElementById(id);
+  const err=document.getElementById('err-'+id);
+  if(input){ input.classList.remove('invalid'); input.classList.add('valid'); }
+  if(err){ err.style.display='none'; }
+}
+
+// ─── RADIO SELECT ────────────────────────
+function selectRadio(label,name,val){
+  document.querySelectorAll(`input[name="${name}"]`).forEach(r=>r.closest('.radio-item')?.classList.remove('selected'));
+  label.classList.add('selected');
+}
+
+// ─── SUBMIT ──────────────────────────────
+document.getElementById('registrationForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(!validateStep(3)) return;
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent='⏳ جارٍ الإرسال...';
+
+  // Collect data
+  const data={
+    fullName: document.getElementById('fullName').value,
+    birthDate: document.getElementById('birthDate').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value,
+    region: document.getElementById('region').value,
+    city: document.getElementById('city').value,
+    troop: document.getElementById('troop').value,
+    years: document.getElementById('years').value,
+    level: document.querySelector('input[name="level"]:checked')?.value,
+    prevTraining: document.getElementById('prevTraining').value,
+    motivation: document.getElementById('motivation').value,
+    problem: document.getElementById('problem').value,
+    stay: document.querySelector('input[name="stay"]:checked')?.value,
+    notes: document.getElementById('notes').value,
+    timestamp: new Date().toISOString(),
+    id: 'CM-2026-'+Math.floor(1000+Math.random()*9000)
+  };
+
+  // Save to localStorage as backup
+  const regs = JSON.parse(localStorage.getItem('cm_registrations')||'[]');
+  regs.push(data);
+  localStorage.setItem('cm_registrations', JSON.stringify(regs));
+
+  // Send to Formspree (replace with your endpoint)
+  fetch('https://formspree.io/f/YOUR_FORM_ID', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify(data)
+  }).catch(()=>{/* offline - data saved locally */});
+
+  // Show success
+  setTimeout(()=>{
+    document.getElementById('registrationForm').style.display='none';
+    document.querySelector('.steps').style.display='none';
+    document.querySelector('.form-progress').style.display='none';
+    document.getElementById('successState').style.display='block';
+    document.getElementById('registrationId').textContent=data.id;
+    document.getElementById('spotsLeft').textContent=Math.max(0,parseInt(document.getElementById('spotsLeft').textContent)-1);
+  },1500);
+});
+
+// ─── REAL-TIME VALIDATION ────────────────
+document.getElementById('fullName').addEventListener('blur',function(){
+  if(this.value.trim().split(' ').length>=2) clearError('fullName');
+});
+document.getElementById('phone').addEventListener('input',function(){
+  this.value=this.value.replace(/[^0-9\s]/g,'');
+});
+</script>
+</body>
+</html>
